@@ -407,6 +407,26 @@
               <FileType>5</FileType>
               <FilePath>..\drv\spi1.h</FilePath>
             </File>
+            <File>
+              <FileName>nrf24l01.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\drv\nrf24l01.c</FilePath>
+            </File>
+            <File>
+              <FileName>nrf24l01.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\drv\nrf24l01.h</FilePath>
+            </File>
+            <File>
+              <FileName>spi2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\drv\spi2.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi2.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\drv\spi2.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

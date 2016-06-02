@@ -1,8 +1,19 @@
 #include "coocox.h"
 #include "stm32f4xx.h"
 
-#define  TASK_STK_SIZE              128
-OS_STK   STK_LED_TASK               [128];
+#include "nrf24l01.h"
+
+enum
+{
+	TASK_INIT_PRI=0,
+	TASK_LED_PRI
+};
+
+#define TASK_INIT_STK_SIZE				128
+OS_STK   STK_INIT_TASK            [TASK_INIT_STK_SIZE];
+
+#define  TASK_LED_STK_SIZE              128
+OS_STK   STK_LED_TASK               [TASK_LED_STK_SIZE ];
 void Task_LED( void *pdata )
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -27,11 +38,18 @@ void Task_LED( void *pdata )
 		CoTickDelay( 100 );
 	}
 }
+void Task_INIT(void *p)
+{
+	NRF_Init(MODEL_RX2, 80);
+	CoCreateTask(Task_LED, Co_NULL, TASK_LED_PRI, &STK_LED_TASK[TASK_LED_STK_SIZE -1], TASK_LED_STK_SIZE  );
+	CoExitTask();
+}
+
 int main(void)
 { 	
 	CoInitOS();
   
-	CoCreateTask(Task_LED, Co_NULL, 10, &STK_LED_TASK[TASK_STK_SIZE-1], TASK_STK_SIZE );
+	CoCreateTask(Task_INIT, Co_NULL, TASK_INIT_PRI, &STK_INIT_TASK[TASK_INIT_STK_SIZE -1], TASK_INIT_STK_SIZE  );
 	
 	CoStartOS();
 	while(1)
