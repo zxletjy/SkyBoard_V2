@@ -137,7 +137,10 @@ void NRF_TxPacket_AP(uint8_t * tx_buf, uint8_t len)
 void NRF_Init(u8 model, u8 ch)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	RCC_AHB1PeriphClockCmd(NRF_CE_RCC|NRF_CSN_RCC, ENABLE);
+	EXTI_InitTypeDef   EXTI_InitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
+	
+	RCC_AHB1PeriphClockCmd(NRF_CE_RCC|NRF_CSN_RCC|NRF_IRQ_RCC, ENABLE);
 	
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -147,6 +150,11 @@ void NRF_Init(u8 model, u8 ch)
 	GPIO_Init(NRF_CE_PORT, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = NRF_CSN_PIN;
 	GPIO_Init(NRF_CSN_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = NRF_IRQ_PIN;//初始化MPU中断IO
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;//普通输出模式
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//上拉
+  GPIO_Init(NRF_IRQ_PORT, &GPIO_InitStructure);//初始化GPIO
 	
 	SPI1_Init();
 	
@@ -197,8 +205,28 @@ void NRF_Init(u8 model, u8 ch)
 		NRF_Write_Reg(NRF_WRITE_REG+0x1d,0x06);
 	}
 	NRF_CE_H();
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);//使能SYSCFG时钟
+	SYSCFG_EXTILineConfig(NRF_IRQ_EXTI_PortSource, NRF_IRQ_EXTI_PinSource);//PE4 连接到中断线4
+	
+	NVIC_InitStructure.NVIC_IRQChannel = NRF_IRQChannel;//外部中断4
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NRF_IRQ_PP;//抢占优先级1
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = NRF_IRQ_SP;//子优先级2
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//使能外部中断通道
+  NVIC_Init(&NVIC_InitStructure);//配置
+	
+	/* 配置EXTI_Line4 */
+	EXTI_InitStructure.EXTI_Line = NRF_EXTI_Line;//LINE
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;//中断事件
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; //上升沿触发 
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;//使能LINE0
+	EXTI_Init(&EXTI_InitStructure);//配置
 }
-
+void NRF_EXTI_IRQHandler(void)
+{
+	EXTI->PR = NRF_EXTI_Line;
+	NRF_Check_Event();
+}
 uint8_t NRF_Check(void)
 { 
 	u8 buf1[5]; 

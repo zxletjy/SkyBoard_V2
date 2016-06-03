@@ -21,10 +21,21 @@
 #define NRF_CE_H()		GPIO_SetBits(NRF_CE_PORT, NRF_CE_PIN)
 
 #define NRF_CSN_PORT	GPIOC
-#define NRF_CSN_RCC		RCC_AHB1Periph_GPIOA
+#define NRF_CSN_RCC		RCC_AHB1Periph_GPIOC
 #define NRF_CSN_PIN		GPIO_Pin_4
 #define NRF_CSN_L()		GPIO_ResetBits(NRF_CSN_PORT, NRF_CSN_PIN)
 #define NRF_CSN_H()		GPIO_SetBits(NRF_CSN_PORT, NRF_CSN_PIN)
+
+#define NRF_IRQ_PORT							GPIOC
+#define NRF_IRQ_RCC								RCC_AHB1Periph_GPIOC
+#define NRF_IRQ_PIN								GPIO_Pin_3
+#define NRF_EXTI_Line							EXTI_Line3
+#define NRF_EXTI_IRQHandler				EXTI3_IRQHandler
+#define NRF_IRQ_EXTI_PortSource		EXTI_PortSourceGPIOC
+#define NRF_IRQ_EXTI_PinSource		EXTI_PinSource3
+#define NRF_IRQChannel						EXTI3_IRQn
+#define NRF_IRQ_PP								3			//中断优先级
+#define NRF_IRQ_SP								0
 
 extern uint8_t NRF24L01_2_RXDATA[RX_PLOAD_WIDTH];//nrf24l01接收到的数据
 extern uint8_t NRF24L01_2_TXDATA[RX_PLOAD_WIDTH];//nrf24l01需要发送的数据
