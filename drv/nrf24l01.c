@@ -158,7 +158,7 @@ void NRF_Init(u8 model, u8 ch)
 	
 	SPI1_Init();
 	
-	while(NRF_Check() == 0);
+	//while(NRF_Check() == 0);
 	NRF_CE_L();
 	NRF_Write_Buf(NRF_WRITE_REG+RX_ADDR_P0,RX_ADDRESS,RX_ADR_WIDTH);	//写RX节点地址 
 	NRF_Write_Buf(NRF_WRITE_REG+TX_ADDR,TX_ADDRESS,TX_ADR_WIDTH); 		//写TX节点地址  
