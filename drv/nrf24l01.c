@@ -40,12 +40,10 @@
 #define TX_DS				5
 #define MAX_RT			4
 
-uint8_t NRF_LinkFlag = 0;
+NRF_Struct NRF;
 
 u8	TX_ADDRESS[TX_ADR_WIDTH] = {0xAA,0xBB,0xCC,0x00,0x01};	//本地地址
 u8	RX_ADDRESS[RX_ADR_WIDTH] = {0xAA,0xBB,0xCC,0x00,0x01};	//接收地址	
-uint8_t NRF24L01_2_RXDATA[RX_PLOAD_WIDTH];//nrf24l01接收到的数据
-uint8_t NRF24L01_2_TXDATA[RX_PLOAD_WIDTH];//nrf24l01需要发送的数据
 
 /*
 *****************************************************************
@@ -158,7 +156,7 @@ void NRF_Init(u8 model, u8 ch)
 	
 	SPI1_Init();
 	
-	//while(NRF_Check() == 0);
+	while(NRF_Check() == 0);
 	NRF_CE_L();
 	NRF_Write_Buf(NRF_WRITE_REG+RX_ADDR_P0,RX_ADDRESS,RX_ADR_WIDTH);	//写RX节点地址 
 	NRF_Write_Buf(NRF_WRITE_REG+TX_ADDR,TX_ADDRESS,TX_ADR_WIDTH); 		//写TX节点地址  
@@ -226,6 +224,9 @@ void NRF_EXTI_IRQHandler(void)
 {
 	EXTI->PR = NRF_EXTI_Line;
 	NRF_Check_Event();
+	CoEnterISR();
+  isr_SetFlag(NRF.NRF_Rx_Done_Flag);
+  CoExitISR();
 }
 uint8_t NRF_Check(void)
 { 
@@ -249,28 +250,21 @@ uint8_t NRF_Check(void)
 
 void NRF_Check_Event(void)
 {
-	static uint8_t nrf_link_count = 100;
 	u8 sta = NRF_Read_Reg(NRF_READ_REG + NRFRegSTATUS);
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
 	if(sta & (1<<RX_DR))
 	{
-		u8 rx_len = NRF_Read_Reg(R_RX_PL_WID);
-		if(rx_len<33)
+		NRF.Rx_Length = NRF_Read_Reg(R_RX_PL_WID);
+		if(NRF.Rx_Length<33)
 		{
-			NRF_Read_Buf(RD_RX_PLOAD,NRF24L01_2_RXDATA,rx_len);// read receive payload from RX_FIFO buffer
-			nrf_link_count=250;
-	//		dt.Data_Receive_Anl(NRF24L01_2_RXDATA,rx_len);
+			NRF_Read_Buf(RD_RX_PLOAD,NRF.RXDATA,NRF.Rx_Length);// read receive payload from RX_FIFO buffer
+			NRF.Rx_IRQ_Count++;
 		}
 		else 
 		{
 			NRF_Write_Reg(FLUSH_RX,0xff);//清空缓冲区
 		}
-	}
-	else
-	{
-		if (nrf_link_count <= 100)nrf_link_count=100;
-		else nrf_link_count--;
 	}
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
@@ -290,8 +284,6 @@ void NRF_Check_Event(void)
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
 	NRF_Write_Reg(NRF_WRITE_REG + NRFRegSTATUS, sta);
-	if (nrf_link_count > 100)NRF_LinkFlag = 1;
-	else NRF_LinkFlag = 0;
 }
 
 

@@ -1,6 +1,7 @@
 #ifndef _NRF24L01_H_
 #define _NRF24L01_H_
 #include "stm32f4xx.h"
+#include "coocox.h"
 #include "spi1.h"
 
 
@@ -28,19 +29,25 @@
 
 #define NRF_IRQ_PORT							GPIOC
 #define NRF_IRQ_RCC								RCC_AHB1Periph_GPIOC
-#define NRF_IRQ_PIN								GPIO_Pin_3
-#define NRF_EXTI_Line							EXTI_Line3
-#define NRF_EXTI_IRQHandler				EXTI3_IRQHandler
+#define NRF_IRQ_PIN								GPIO_Pin_5
+#define NRF_EXTI_Line							EXTI_Line5
+#define NRF_EXTI_IRQHandler				EXTI9_5_IRQHandler
 #define NRF_IRQ_EXTI_PortSource		EXTI_PortSourceGPIOC
-#define NRF_IRQ_EXTI_PinSource		EXTI_PinSource3
-#define NRF_IRQChannel						EXTI3_IRQn
+#define NRF_IRQ_EXTI_PinSource		EXTI_PinSource5
+#define NRF_IRQChannel						EXTI9_5_IRQn
 #define NRF_IRQ_PP								3			//中断优先级
 #define NRF_IRQ_SP								0
 
-extern uint8_t NRF24L01_2_RXDATA[RX_PLOAD_WIDTH];//nrf24l01接收到的数据
-extern uint8_t NRF24L01_2_TXDATA[RX_PLOAD_WIDTH];//nrf24l01需要发送的数据
-extern uint8_t NRF_LinkFlag;	
+typedef struct
+{
+	uint8_t RXDATA[RX_PLOAD_WIDTH];//nrf24l01接收到的数据
+	uint8_t TXDATA[RX_PLOAD_WIDTH];//nrf24l01需要发送的数据
+	uint8_t Rx_Length;//接收到数据长度
+	uint32_t Rx_IRQ_Count;//进入接收中断的次数，可以用来判断是否失联
+	OS_FlagID NRF_Rx_Done_Flag;//接收完成中断
+}NRF_Struct;
 
+extern NRF_Struct NRF;
 
 //初始化,model=1/2/3/4,ch为实用的通道号
 void NRF_Init(u8 model, u8 ch);	
