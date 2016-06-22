@@ -13,17 +13,17 @@ enum
 };
 
 
-#define TASK_INIT_STK_SIZE				128
-OS_STK   STK_INIT_TASK            [TASK_INIT_STK_SIZE];
+#define TASK_INIT_STK_SIZE			 128
+OS_STK   STK_INIT_TASK           [TASK_INIT_STK_SIZE];
 
-#define TASK_NRF_STK_SIZE				128
+#define TASK_NRF_STK_SIZE				 128
 OS_STK   STK_NRF_TASK            [TASK_NRF_STK_SIZE];
 
-#define  TASK_LED_STK_SIZE              128
-OS_STK   STK_LED_TASK               [TASK_LED_STK_SIZE ];
+#define  TASK_LED_STK_SIZE       128
+OS_STK   STK_LED_TASK            [TASK_LED_STK_SIZE ];
 
-#define  TASK_ADC_STK_SIZE              128
-OS_STK   STK_ADC_TASK               [TASK_ADC_STK_SIZE ];
+#define  TASK_ADC_STK_SIZE       128
+OS_STK   STK_ADC_TASK            [TASK_ADC_STK_SIZE ];
 
 void Task_LED( void *pdata )
 {
@@ -38,7 +38,6 @@ void Task_LED( void *pdata )
 	
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
 	GPIO_Init(GPIOD, &GPIO_InitStructure);
-	
 	
 	while(1)
 	{
