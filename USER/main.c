@@ -4,10 +4,6 @@
 #include "nrf24l01.h"
 #include "usart.h"
 #include "adc.h"
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-//#include "key.h"
 enum
 {
 	TASK_INIT_PRI=0,
@@ -28,21 +24,6 @@ OS_STK   STK_LED_TASK               [TASK_LED_STK_SIZE ];
 
 #define  TASK_ADC_STK_SIZE              128
 OS_STK   STK_ADC_TASK               [TASK_ADC_STK_SIZE ];
-
-int AQ_PRINTF(const char * fmt, ... )
-{
-	va_list argptr;
-	int cnt;
-	static char buffer[64] ;
-	memset(buffer, 0, sizeof(buffer));
-	va_start(argptr, fmt);
-	cnt = vsnprintf(buffer, sizeof(buffer), fmt, argptr);
-	va_end(argptr);
-
-	USART1_SendU8((uint8_t *)buffer, cnt);
-	
-	return cnt;
-}
 
 void Task_LED( void *pdata )
 {
@@ -83,12 +64,13 @@ void Task_NRF(void *p)
 }
 void Task_ADC(void *p)
 {
-	int i=10;
 	USART1_Init(115200);
 	while(1)
 	{
+		AQ_PRINTF("my printf is fucking work!!!\n");
 		CoTickDelay(1000);
-		AQ_PRINTF("what the fuck = %d\n", i);
+		AQ_PRINTF("込込込込込込込込込\n");
+		CoTickDelay(1000);
 	}
 }
 void Task_INIT(void *p)
