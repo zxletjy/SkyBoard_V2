@@ -4,6 +4,7 @@
 #include "nrf24l01.h"
 #include "usart.h"
 #include "adc.h"
+#include "IMU.h"
 enum
 {
 	TASK_INIT_PRI=0,
@@ -63,6 +64,7 @@ void Task_NRF(void *p)
 }
 void Task_ADC(void *p)
 {
+	IMU_Init();
 	USART1_Init(115200);
 	while(1)
 	{

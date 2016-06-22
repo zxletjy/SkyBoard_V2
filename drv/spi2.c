@@ -4,20 +4,20 @@ void SPI2_Init(void)
 	GPIO_InitTypeDef  GPIO_InitStructure;
   SPI_InitTypeDef  SPI_InitStructure;
 	
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+  RCC_AHB1PeriphClockCmd(SPI2_GPIO_RCC, ENABLE);
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);//使能SPI2时钟
  
   //GPIOA5,6,7初始化设置
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15;
+  GPIO_InitStructure.GPIO_Pin = SPI2_SCK_PIN|SPI2_MISO_PIN|SPI2_MOSI_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//复用功能
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;//100MHz
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//上拉
-  GPIO_Init(GPIOB, &GPIO_InitStructure);//初始化
+  GPIO_Init(SPI2_GPIO_PORT, &GPIO_InitStructure);//初始化
 	
-	GPIO_PinAFConfig(GPIOB,GPIO_PinSource13,GPIO_AF_SPI2); 
-	GPIO_PinAFConfig(GPIOB,GPIO_PinSource14,GPIO_AF_SPI2); 
-	GPIO_PinAFConfig(GPIOB,GPIO_PinSource15,GPIO_AF_SPI2);
+	GPIO_PinAFConfig(SPI2_GPIO_PORT,SPI2_SCK_GPIO_PinSource,GPIO_AF_SPI2); 
+	GPIO_PinAFConfig(SPI2_GPIO_PORT,SPI2_MISO_GPIO_PinSource,GPIO_AF_SPI2); 
+	GPIO_PinAFConfig(SPI2_GPIO_PORT,SPI2_MOSI_GPIO_PinSource,GPIO_AF_SPI2);
  
 	//这里只针对SPI口初始化
 	RCC_APB1PeriphResetCmd(RCC_APB1Periph_SPI2,ENABLE);//复位SPI2
