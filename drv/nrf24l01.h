@@ -3,7 +3,7 @@
 #include "stm32f4xx.h"
 #include "coocox.h"
 #include "spi1.h"
-
+#include "NVIC&RCC.h"//里面有定义中断优先级，仅此而已
 
 #define MODEL_RX				1			//普通接收
 #define MODEL_TX				2			//普通发送
@@ -35,8 +35,8 @@
 #define NRF_IRQ_EXTI_PortSource		EXTI_PortSourceGPIOC
 #define NRF_IRQ_EXTI_PinSource		EXTI_PinSource5
 #define NRF_IRQChannel						EXTI9_5_IRQn
-#define NRF_IRQ_PP								3			//中断优先级
-#define NRF_IRQ_SP								0
+//#define NRF_IRQ_PP								3			//中断优先级
+//#define NRF_IRQ_SP								0
 
 typedef struct
 {

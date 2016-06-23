@@ -13,5 +13,6 @@
 
 void SPI2_Init(void);
 uint8_t SPI2_RW(uint8_t data);
+void SPI2_SetSpeed(u8 SPI_BaudRatePrescaler);
 #endif
 

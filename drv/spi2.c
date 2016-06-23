@@ -7,7 +7,6 @@ void SPI2_Init(void)
   RCC_AHB1PeriphClockCmd(SPI2_GPIO_RCC, ENABLE);
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);//使能SPI2时钟
  
-  //GPIOA5,6,7初始化设置
   GPIO_InitStructure.GPIO_Pin = SPI2_SCK_PIN|SPI2_MISO_PIN|SPI2_MOSI_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//复用功能
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出

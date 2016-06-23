@@ -1,5 +1,6 @@
 #include "coocox.h"
 #include "stm32f4xx.h"
+#include "NVIC&RCC.h"
 
 #include "nrf24l01.h"
 #include "usart.h"
@@ -76,7 +77,7 @@ void Task_ADC(void *p)
 }
 void Task_INIT(void *p)
 {
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	NVIC_Config();
 	//CoCreateTask(Task_NRF, Co_NULL, TASK_NRF_PRI, &STK_NRF_TASK[TASK_NRF_STK_SIZE -1], TASK_NRF_STK_SIZE);
 	CoCreateTask(Task_ADC, Co_NULL, TASK_ADC_PRI, &STK_ADC_TASK[TASK_ADC_STK_SIZE -1], TASK_ADC_STK_SIZE  );
 	CoCreateTask(Task_LED, Co_NULL, TASK_LED_PRI, &STK_LED_TASK[TASK_LED_STK_SIZE -1], TASK_LED_STK_SIZE  );
